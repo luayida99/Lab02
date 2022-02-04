@@ -12,9 +12,12 @@ rm -rfv ref/*.out
 gcc ref/*.c -o $1
 
 # Generate reference output files
+total_marks=0
+
 for i in ref/*.in; do 
     echo >> $i.out 
     ./$1 < $i > $i.out
+    total_marks=$((total_marks+1))
 done
 
 # Now mark submissions
@@ -22,6 +25,13 @@ done
 #
 # Note: See Lab02Qn.pdf for format of output file. Marks will be deducted for missing elements.
 #
+rm results.out
+day=$(date +%A)
+date=$(date +%e)
+month=$(date +%B)
+year=$(date +%Y)
+time=$(date +%T)
+echo -e "Test date and time: $day, $date $month $year, $time\n" >> results.out
 
 # Iterate over every submission directory
     # Compile C code
@@ -30,3 +40,19 @@ done
     # Compare with reference output files  and award 1 mark if they are identical
 # print score for student
 # print total files marked.
+processed=0
+
+for i in subs/*; do 
+    gcc $i/*.c -o $i/compiled
+    if [[ "$?" -ne 0 ]]; then
+        processed=$((processed+1))
+        echo "Directory $i has a compile error." >> results.out
+        #compile error means that no marks given
+        echo "Directory $i score 0 / $total_marks." >> results.out
+    else 
+        processed=$((processed+1))
+        echo "Directory $i score x / $total_marks." >> results.out
+    fi
+done
+
+echo -e "\nProcessed $processed files." >> results.out
