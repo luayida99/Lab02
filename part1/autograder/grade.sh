@@ -26,7 +26,9 @@ done
 #
 # Note: See Lab02Qn.pdf for format of output file. Marks will be deducted for missing elements.
 #
-rm results.out
+if [[ -f results.out ]]; then
+    rm results.out
+fi
 day=$(date +%A)
 date=$(date +%e)
 month=$(date +%B)
@@ -44,25 +46,28 @@ echo -e "Test date and time: $day, $date $month $year, $time\n" >> results.out
 processed=0
 
 for i in subs/*; do 
-    gcc $i/*.c -o $i/compiled
+    subdir_name=${i#subs/}
+    gcc $i/*.c -o $i/$subdir_name
     if [[ "$?" -ne 0 ]]; then
         processed=$((processed+1))
-        echo "Directory $i has a compile error." >> results.out
+        echo "Directory $subdir_name has a compile error." >> results.out
         #compile error means that no marks given
-        echo "Directory $i score 0 / $total_marks." >> results.out
+        echo "Directory $subdir_name score 0 / $total_marks." >> results.out
     else 
         marks=0
         for j in ref/*.in; do 
-            mkdir $i/ref
+            if [[ ! -d $i/ref ]]; then
+                mkdir $i/ref
+            fi
             echo >> $i/$j.out 
-            ./$i/compiled < $j > $i/$j.out 
+            ./$i/$subdir_name < $j > $i/$j.out 
             diff $i/$j.out $j.out
             if [[ "$?" -eq 0 ]]; then
                 marks=$((marks+1))
             fi
         done
         processed=$((processed+1))
-        echo "Directory $i score $marks / $total_marks." >> results.out
+        echo "Directory $subdir_name score $marks / $total_marks." >> results.out
     fi
 done
 
