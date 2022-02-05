@@ -34,7 +34,7 @@ date=$(date +%e)
 month=$(date +%B)
 year=$(date +%Y)
 time=$(date +%T)
-echo -e "Test date and time: $day, $date $month $year, $time\n" >> results.out
+echo -e "Test date and time: $day,$date $month $year, $time\n" >> results.out
 
 # Iterate over every submission directory
     # Compile C code
