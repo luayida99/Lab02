@@ -3,6 +3,7 @@
 # Check if we have enough arguments
 if [ "$#" -ne 1 ]; then 
     echo "Usage: ./grade.sh <filename>"
+    exit 1
 fi
 
 # Delete temporary files
@@ -50,8 +51,18 @@ for i in subs/*; do
         #compile error means that no marks given
         echo "Directory $i score 0 / $total_marks." >> results.out
     else 
+        marks=0
+        for j in ref/*.in; do 
+            mkdir $i/ref
+            echo >> $i/$j.out 
+            ./$i/compiled < $j > $i/$j.out 
+            diff $i/$j.out $j.out
+            if [[ "$?" -eq 0 ]]; then
+                marks=$((marks+1))
+            fi
+        done
         processed=$((processed+1))
-        echo "Directory $i score x / $total_marks." >> results.out
+        echo "Directory $i score $marks / $total_marks." >> results.out
     fi
 done
 
