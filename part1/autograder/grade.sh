@@ -7,7 +7,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # Delete temporary files
-rm -rfv ref/*.out
+rm -fv ref/*.out
 
 # Compile the reference program
 gcc ref/*.c -o $1
@@ -15,9 +15,10 @@ gcc ref/*.c -o $1
 # Generate reference output files
 total_marks=0
 
-for i in ref/*.in; do 
-    echo >> $i.out 
-    ./$1 < $i > $i.out
+for i in ref/*.in; do
+    z=${i%.in}.out 
+    echo >> $z 
+    ./$1 < $i > $z
     total_marks=$((total_marks+1))
 done
 
@@ -59,9 +60,10 @@ for i in subs/*; do
             if [[ ! -d $i/ref ]]; then
                 mkdir $i/ref
             fi
-            echo >> $i/$j.out 
-            ./$i/$subdir_name < $j > $i/$j.out 
-            diff $i/$j.out $j.out
+	    z=${j%.in}.out
+            echo >> $i/$z 
+            ./$i/$subdir_name < $j > $i/$z
+            diff $i/$z $z
             if [[ "$?" -eq 0 ]]; then
                 marks=$((marks+1))
             fi
