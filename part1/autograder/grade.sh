@@ -48,7 +48,7 @@ processed=0
 
 for i in subs/*; do 
     subdir_name=${i#subs/}
-    gcc $i/*.c -o $i/$subdir_name
+    gcc $i/*.c -o $i/$subdir_name &>/dev/null #suppressed compilation error
     if [[ "$?" -ne 0 ]]; then
         processed=$((processed+1))
         echo "Directory $subdir_name has a compile error." >> results.out
