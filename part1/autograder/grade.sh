@@ -7,7 +7,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # Delete temporary files
-rm -fv ref/*.out
+rm -f ref/*.out #removed -v flag, unnecessary
 
 # Compile the reference program
 gcc ref/*.c -o $1
@@ -63,7 +63,7 @@ for i in subs/*; do
 	    z=${j%.in}.out
             echo >> $i/$z 
             ./$i/$subdir_name < $j > $i/$z
-            diff $i/$z $z
+            diff $i/$z $z &>/dev/null #suppressed diff terminal output
             if [[ "$?" -eq 0 ]]; then
                 marks=$((marks+1))
             fi
