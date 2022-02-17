@@ -17,7 +17,7 @@ int main() {
     //
 
     int p[2]; // p[0] is reading, p[1] is writing
-    int fp_out = open("./result.out", O_CREAT | O_WRONLY);
+    int fp_out = open("./results.out", O_CREAT | O_WRONLY, 0666);
 
     if (pipe(p) < 0) {
         perror("lab2p2f: ");
@@ -30,19 +30,18 @@ int main() {
         execlp("./slow", "slow", "5", (char *) 0);
         close(p[1]);
     } else {
-        wait(NULL);
-    }
-
-    // exec talk
-    if (fork() == 0) {
-        dup2(p[0], STDIN_FILENO);
-        dup2(fp_out, STDOUT_FILENO);
         close(p[1]);
-        execlp("./talk", "talk", (char *) 0);
-        close(p[0]);
-        close(fp_out);
-    } else {
-        wait(NULL);
+        // exec talk
+        if (fork() == 0) {
+            dup2(p[0], STDIN_FILENO);
+            dup2(fp_out, STDOUT_FILENO);
+            execlp("./talk", "talk", (char *) 0);
+            close(p[0]);
+        } else {
+            wait(NULL);
+            close(p[0]);
+        }
     }
+    close(fp_out);
 }
 
