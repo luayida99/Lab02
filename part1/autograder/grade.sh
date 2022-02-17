@@ -7,7 +7,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # Delete temporary files
-rm -f ref/*.out #removed -v flag, unnecessary
+rm -f ref/*.out
 
 # Compile the reference program
 gcc ref/*.c -o $1
@@ -35,7 +35,7 @@ date=$(date +%e)
 month=$(date +%B)
 year=$(date +%Y)
 time=$(date +%T)
-echo -e "Test date and time: $day,$date $month $year, $time\n" >> results.out
+echo -e "Test date and time: $day, $date $month $year, $time\n" >> results.out
 
 # Iterate over every submission directory
     # Compile C code
@@ -44,11 +44,12 @@ echo -e "Test date and time: $day,$date $month $year, $time\n" >> results.out
     # Compare with reference output files  and award 1 mark if they are identical
 # print score for student
 # print total files marked.
+
 processed=0
 
 for i in subs/*; do 
     subdir_name=${i#subs/}
-    gcc $i/*.c -o $i/$subdir_name &>/dev/null #suppressed compilation error
+    gcc $i/*.c -o $i/$subdir_name &>/dev/null
     if [[ "$?" -ne 0 ]]; then
         processed=$((processed+1))
         echo "Directory $subdir_name has a compile error." >> results.out
@@ -63,7 +64,7 @@ for i in subs/*; do
 	    z=${j%.in}.out
             echo >> $i/$z 
             ./$i/$subdir_name < $j > $i/$z
-            diff $i/$z $z &>/dev/null #suppressed diff terminal output
+            diff $i/$z $z &>/dev/null
             if [[ "$?" -eq 0 ]]; then
                 marks=$((marks+1))
             fi
